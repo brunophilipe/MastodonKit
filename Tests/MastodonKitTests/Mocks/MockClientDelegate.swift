@@ -10,8 +10,7 @@ import Foundation
 import MastodonKit
 
 class MockClientDelegate: ClientDelegate {
-
-    var isRequestingNewAuthToken: Bool = false
+    var isRequestingNewAccessToken: Bool = false
 
     var producedUnauthorizedErrorHandler: ((ClientType) -> Void)?
 

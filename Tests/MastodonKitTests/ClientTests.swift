@@ -279,14 +279,14 @@ class ClientDelegateTests: XCTestCase {
 
     func testUnauthorizedErrorDelegateCall() {
 
-        future = client!.run(Timelines.home(), resumeImmediatelly: true) { result in
+        future = client!.run(Timelines.home(), resumeImmediately: true) { result in
             self.result = result
         }
 
         let expectation = XCTestExpectation(description: "Delegate method should have been called")
 
         delegateMock.producedUnauthorizedErrorHandler = { [unowned self] _ in
-            self.delegateMock.isRequestingNewAuthToken = true
+            self.delegateMock.isRequestingNewAccessToken = true
             expectation.fulfill()
         }
 
@@ -297,15 +297,15 @@ class ClientDelegateTests: XCTestCase {
 
     func testUnauthorizedErrorAutomaticRetryCall() {
 
-        future = client!.run(Timelines.home(), resumeImmediatelly: true) { result in
+        future = client!.run(Timelines.home(), resumeImmediately: true) { result in
             self.result = result
         }
 
         delegateMock.producedUnauthorizedErrorHandler = { [unowned self] _ in
-            self.delegateMock.isRequestingNewAuthToken = true
+            self.delegateMock.isRequestingNewAccessToken = true
 
             DispatchQueue.main.async {
-                self.delegateMock.isRequestingNewAuthToken = false
+                self.delegateMock.isRequestingNewAccessToken = false
                 self.client?.accessToken = "baz"
             }
         }
@@ -330,7 +330,7 @@ class ClientDelegateTests: XCTestCase {
         var client = self.client!
 
         delegateMock.producedUnauthorizedErrorHandler = { [unowned self] _ in
-            self.delegateMock.isRequestingNewAuthToken = true
+            self.delegateMock.isRequestingNewAccessToken = true
         }
 
         let timelineExpectation = expectation(description: "Timeline should have been fetched")
@@ -356,7 +356,7 @@ class ClientDelegateTests: XCTestCase {
             (accountFixture, makeOKResponse(), nil)
         ]
 
-        delegateMock.isRequestingNewAuthToken = false
+        delegateMock.isRequestingNewAccessToken = false
         client.accessToken = "baz"
 
         wait(for: [timelineExpectation, userExpectation], timeout: 1)

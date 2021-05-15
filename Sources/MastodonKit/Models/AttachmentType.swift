@@ -17,6 +17,8 @@ public enum AttachmentType: String, Codable {
     case gifv
     /// The attachment contains an unknown image file.
     case unknown
+    /// The attachment contains audio.
+    case audio
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -24,6 +26,7 @@ public enum AttachmentType: String, Codable {
         case "image": self = .image
         case "video": self = .video
         case "gifv": self = .gifv
+        case "audio": self = .audio
         default: self = .unknown
         }
     }

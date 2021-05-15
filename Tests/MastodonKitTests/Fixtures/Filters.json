@@ -1,0 +1,10 @@
+[
+    {
+        "id":"1",
+        "phrase":"test",
+        "context":["notifications","public"],
+        "whole_word":true,
+        "expires_at":null,
+        "irreversible":false
+    }
+]

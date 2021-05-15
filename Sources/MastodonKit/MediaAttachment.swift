@@ -15,6 +15,8 @@ public enum MediaAttachment {
     case gif(Data?)
     /// PNG (Portable Network Graphics) image
     case png(Data?)
+    /// Video media file
+    case video(Data?)
     /// Other media file
     case other(Data?, fileExtension: String, mimeType: String)
 }
@@ -25,6 +27,7 @@ extension MediaAttachment {
         case .jpeg(let data): return data
         case .gif(let data): return data
         case .png(let data): return data
+        case .video(let data): return data
         case .other(let data, _, _): return data
         }
     }
@@ -34,6 +37,7 @@ extension MediaAttachment {
         case .jpeg: return "file.jpg"
         case .gif: return "file.gif"
         case .png: return "file.png"
+        case .video: return "file.mov"
         case .other(_, let fileExtension, _): return "file.\(fileExtension)"
         }
     }
@@ -43,6 +47,7 @@ extension MediaAttachment {
         case .jpeg: return "image/jpg"
         case .gif: return "image/gif"
         case .png: return "image/png"
+        case .video: return "video/mp4"
         case .other(_, _, let mimeType): return mimeType
         }
     }
@@ -62,6 +67,7 @@ extension MediaAttachment: Codable {
         case "jpeg": self = .jpeg(try container.decodeIfPresent(Data.self, forKey: .data))
         case "gif": self = .gif(try container.decodeIfPresent(Data.self, forKey: .data))
         case "png": self = .png(try container.decodeIfPresent(Data.self, forKey: .data))
+        case "video": self = .video(try container.decodeIfPresent(Data.self, forKey: .data))
         case "other":
             self = .other(try container.decodeIfPresent(Data.self, forKey: .data),
                           fileExtension: try container.decode(String.self, forKey: .fileExtension),
@@ -91,6 +97,10 @@ extension MediaAttachment: Codable {
             try container.encode("png", forKey: .type)
             try container.encodeIfPresent(data, forKey: .data)
 
+        case .video(let data):
+            try container.encode("mp4", forKey: .type)
+            try container.encodeIfPresent(data, forKey: .data)
+
         case .other(let data, let fileExtension, let mimeType):
             try container.encode("other", forKey: .type)
             try container.encodeIfPresent(data, forKey: .data)
@@ -118,7 +128,7 @@ extension FormMediaAttachment: FormParameter {
             let data = mediaAttachment?.data,
             let mime = mediaAttachment?.mimeType,
             let filename = mediaAttachment?.fileName
-            else { return nil }
+        else { return nil }
 
         let prefix = """
             --\(Payload.formBoundary)
@@ -132,8 +142,8 @@ extension FormMediaAttachment: FormParameter {
         guard
             let prefixData = prefix.data(using: .utf8),
             let suffixData = suffix.data(using: .utf8)
-            else {
-                return nil
+        else {
+            return nil
         }
 
         return prefixData + data + suffixData

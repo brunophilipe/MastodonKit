@@ -28,13 +28,17 @@ public class Status: Codable {
     /// An array of Emoji.
     public let emojis: [Emoji]
     /// The number of reblogs for the status.
-    public let reblogsCount: Int
+    public private(set) var reblogsCount: Int
     /// The number of favourites for the status.
-    public let favouritesCount: Int
+    public private(set) var favouritesCount: Int
+    /// The number of replies for the status.
+    public private(set) var repliesCount: Int
     /// Whether the authenticated user has reblogged the status.
-    public let reblogged: Bool?
+    public private(set) var reblogged: Bool?
     /// Whether the authenticated user has favourited the status.
-    public let favourited: Bool?
+    public private(set) var favourited: Bool?
+    /// Whether the authenticated user has bookmarked the status.
+    public private(set) var bookmarked: Bool?
     /// Whether media attachments should be hidden by default.
     public let sensitive: Bool?
     /// If not empty, warning text that should be displayed before the actual content.
@@ -59,6 +63,8 @@ public class Status: Codable {
     public let card: Card?
     /// A poll
     public let poll: Poll?
+    /// The status' scheduled time to post
+    public let scheduledAt: Date?
 
     private enum CodingKeys: String, CodingKey {
         case id
@@ -71,9 +77,11 @@ public class Status: Codable {
         case createdAt = "created_at"
         case emojis
         case reblogsCount = "reblogs_count"
+        case repliesCount = "replies_count"
         case favouritesCount = "favourites_count"
         case reblogged
         case favourited
+        case bookmarked
         case sensitive
         case spoilerText = "spoiler_text"
         case visibility
@@ -86,9 +94,38 @@ public class Status: Codable {
         case pinned
         case card
         case poll
+        case scheduledAt = "scheduled_at"
     }
 
     public func markAsPinned() {
         pinned = true
+    }
+
+    public func markAsUnPinned() {
+        pinned = false
+    }
+
+    public func setFavourited(state: Bool) {
+        favourited = state
+    }
+
+    public func setReblogged(state: Bool) {
+        reblogged = state
+    }
+
+    public func setBookmarked(state: Bool) {
+        bookmarked = state
+    }
+
+    public func setReblogsCount(count: Int) {
+        reblogsCount = count
+    }
+
+    public func setRepliesCount(count: Int) {
+        repliesCount = count
+    }
+
+    public func setFavouritesCount(count: Int) {
+        favouritesCount = count
     }
 }

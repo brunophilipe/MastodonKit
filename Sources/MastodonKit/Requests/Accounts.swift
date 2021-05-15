@@ -110,6 +110,22 @@ public enum Accounts {
         return Request<[Status]>(path: "/api/v1/accounts/\(id)/statuses", method: method)
     }
 
+    /// Gets an account's scheduled statuses.
+    ///
+    /// - Parameters:
+    ///   - id: The account id.
+    ///   - mediaOnly: Only return statuses that have media attachments.
+    ///   - pinnedOnly: Only return statuses that have been pinned.
+    ///   - excludeReplies: Skip statuses that reply to other statuses.
+    ///   - range: The bounds used when requesting data from Mastodon.
+    /// - Returns: Request for `[Status]`.
+    public static func scheduled_statuses(range: RequestRange = .default) -> Request<[ScheduledStatus]> {
+        let rangeParameters = range.parameters(limit: between(1, and: 40, default: 20)) ?? []
+
+        let method = HTTPMethod.get(.parameters(rangeParameters))
+        return Request<[ScheduledStatus]>(path: "/api/v1/scheduled_statuses", method: method)
+    }
+
     /// Follows an account.
     ///
     /// - Parameter id: The account id.
@@ -199,5 +215,24 @@ public enum Accounts {
 
         let method = HTTPMethod.get(.parameters(parameters))
         return Request<[Account]>(path: "/api/v1/accounts/search", method: method)
+    }
+
+    /// Returns follow requests for the account.
+    ///
+    /// - Parameters:
+    ///     - range: The bounds used when requesting data from Mastodon.
+    /// - Returns: Request for `[Account]`
+    public static func follow_requests(range: RequestRange = .default) -> Request<[Account]> {
+        let rangeParameters = range.parameters(limit: between(1, and: 40, default: 20)) ?? []
+
+        let method = HTTPMethod.get(.parameters(rangeParameters))
+        return Request<[Account]>(path: "/api/v1/follow_requests", method: method)
+    }
+
+    /// Returns a server-generated suggestions on who to follow, based on previous positive interactions.
+    ///
+    /// - Returns: Request for `[Account]`.
+    public static func suggestions() -> Request<[Account]>{
+        return Request<[Account]>(path: "/api/v1/suggestions")
     }
 }
